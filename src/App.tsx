@@ -2,18 +2,31 @@ import React, { useState } from 'react';
 
 export default function App() {
   const [currentSlide, setCurrentSlide] = useState(1);
+  const [websTapped, setWebsTapped] = useState(0);
+  const [isPlaying, setIsPlaying] = useState(false);
   const [noCount, setNoCount] = useState(0);
-  const [noPosition, setNoPosition] = useState({ top: '50%', left: '60%' });
-  const [claimedCoupon, setClaimedCoupon] = useState(false);
+  const [noPosition, setNoPosition] = useState({ top: '60%', left: '60%' });
+  const [claimedCoupons, setClaimedCoupons] = useState<{ [key: number]: boolean }>({});
+
+  // Audio link for Jeff Buckley vibe snippet
+  const audioUrl = "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"; 
 
   const noPhrases = [
     "No 🥺",
     "Are you sure? 💔",
+    "Spidey sense says reconsider! 🕸️",
     "Think again! 🐻",
-    "Last chance! 🕷️",
-    "Surely not? 🎸",
-    "Spidey-sense says reconsider! 🕸️",
+    "Last chance! 🎸",
   ];
+
+  const handleWebTap = () => {
+    if (websTapped < 2) {
+      setWebsTapped((prev) => prev + 1);
+    } else {
+      setWebsTapped(3);
+      setTimeout(() => setCurrentSlide(2), 600);
+    }
+  };
 
   const handleNoDodge = () => {
     const randomTop = Math.floor(Math.random() * 60 + 20) + '%';
@@ -22,14 +35,17 @@ export default function App() {
     setNoCount((prev) => prev + 1);
   };
 
-  const yesButtonSize = noCount * 12 + 18;
+  const toggleCoupon = (id: number) => {
+    setClaimedCoupons((prev) => ({ ...prev, [id]: !prev[id] }));
+  };
+
+  const yesButtonSize = noCount * 10 + 18;
 
   return (
     <div style={styles.container}>
-      {/* Background Animated Spiral Pattern */}
       <div style={styles.spiralBg} />
 
-      {/* Slide Progress Bar */}
+      {/* Progress Indicator */}
       <div style={styles.progressBar}>
         {[1, 2, 3, 4, 5].map((num) => (
           <div
@@ -43,67 +59,96 @@ export default function App() {
         ))}
       </div>
 
-      {/* SLIDE 1: BEAR INTRO */}
+      {/* SLIDE 1: SPIDEY MINI GAME */}
       {currentSlide === 1 && (
         <div style={styles.card}>
-          <div style={styles.badge}>SPECIAL DELIVERY 📬</div>
-          <img
-            src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExcDdtZ2JiZDR0a3B3aTJtc3p3Y3dtY29reHJ6ZjZhNnR3OHR4a3R2byZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/Lp8alM9xBIBS/giphy.gif"
-            alt="Cute Bear GIF"
-            style={styles.gifImage}
-          />
+          <div style={styles.badge}>MINI-GAME UNLOCK 🕷️</div>
           <h1 style={styles.title}>Hey Rani! ✨</h1>
           <p style={styles.subtitle}>
-            I built a little interactive world just for you. Ready to explore? 🐻❤️
+            Tap all 3 Spidey Webs on the card to unlock your secret Valentine delivery! ({websTapped}/3)
           </p>
-          <button style={styles.primaryBtn} onClick={() => setCurrentSlide(2)}>
-            Unfold the Magic ➔
-          </button>
+
+          <div style={styles.webGrid}>
+            {[1, 2, 3].map((id) => (
+              <button
+                key={id}
+                onClick={handleWebTap}
+                style={{
+                  ...styles.webBtn,
+                  opacity: websTapped >= id ? 0.3 : 1,
+                  transform: websTapped >= id ? 'scale(0.8)' : 'scale(1)',
+                }}
+              >
+                {websTapped >= id ? '✅' : '🕸️'}
+              </button>
+            ))}
+          </div>
+
+          {websTapped === 3 && (
+            <p style={{ color: '#10b981', fontWeight: 'bold', animation: 'bounce 0.5s' }}>
+              ACCESS GRANTED! Opening... 🚀
+            </p>
+          )}
         </div>
       )}
 
-      {/* SLIDE 2: POLAROID MEMORY CARD & SPIDER-MAN */}
+      {/* SLIDE 2: JEFF BUCKLEY VINYL PLAYER */}
       {currentSlide === 2 && (
         <div style={styles.card}>
-          <div style={styles.badge}>MEMORIES & SPIDEY VIBES 🕷️</div>
+          <div style={styles.badge}>NOW PLAYING: JEFF BUCKLEY 🎸</div>
           
-          {/* Polaroid Frame */}
-          <div style={styles.polaroidFrame}>
-            <div style={styles.polaroidImageArea}>
-              <span style={{ fontSize: '48px' }}>🕷️❤️</span>
+          <div style={styles.vinylContainer}>
+            <div
+              style={{
+                ...styles.vinylRecord,
+                animation: isPlaying ? 'spin 3s linear infinite' : 'none',
+              }}
+            >
+              <div style={styles.vinylGroove} />
+              <div style={styles.vinylLabel}>
+                <span>🎵</span>
+              </div>
             </div>
-            <p style={styles.polaroidCaption}>"My Favorite Person in Every Universe"</p>
           </div>
 
-          <p style={styles.subtitle}>
-            Even Spider-Man's web couldn't catch someone as special as you, Rani! 🕸️✨
-          </p>
+          {/* Equalizer Bars */}
+          <div style={styles.equalizer}>
+            <div style={{ ...styles.eqBar, height: isPlaying ? '24px' : '8px' }} />
+            <div style={{ ...styles.eqBar, height: isPlaying ? '36px' : '12px' }} />
+            <div style={{ ...styles.eqBar, height: isPlaying ? '18px' : '6px' }} />
+            <div style={{ ...styles.eqBar, height: isPlaying ? '30px' : '10px' }} />
+          </div>
 
-          <button style={styles.primaryBtn} onClick={() => setCurrentSlide(3)}>
+          <p style={styles.quoteText}>"Lover, You Should've Come Over"</p>
+
+          <button
+            style={styles.musicToggleBtn}
+            onClick={() => setIsPlaying(!isPlaying)}
+          >
+            {isPlaying ? '⏸️ Pause Vibe' : '▶️ Play Song Snippet'}
+          </button>
+
+          <button style={{ ...styles.primaryBtn, marginTop: '20px' }} onClick={() => setCurrentSlide(3)}>
             Next Memory ➔
           </button>
         </div>
       )}
 
-      {/* SLIDE 3: JEFF BUCKLEY VINYL RECORD */}
+      {/* SLIDE 3: INTERACTIVE POLAROID CARD */}
       {currentSlide === 3 && (
         <div style={styles.card}>
-          <div style={styles.badge}>NOW PLAYING 🎸</div>
+          <div style={styles.badge}>MEMORY SNAPSHOT 📸</div>
           
-          {/* Animated Vinyl Player */}
-          <div style={styles.vinylContainer}>
-            <div style={styles.vinylRecord}>
-              <div style={styles.vinylGroove} />
-              <div style={styles.vinylLabel}>
-                <span style={{ fontSize: '20px' }}>🎵</span>
-              </div>
+          <div style={styles.polaroidFrame}>
+            <div style={styles.polaroidImageArea}>
+              <span style={{ fontSize: '56px' }}>🕷️❤️</span>
             </div>
+            <p style={styles.polaroidCaption}>"My favorite person in every universe."</p>
           </div>
 
-          <p style={styles.quoteText}>
-            "Too young to hold on, and too old to just break free and run..."
+          <p style={styles.subtitle}>
+            Just like a classic song, having you around never gets old, Rani! ✨
           </p>
-          <p style={styles.songTitle}>Jeff Buckley — Lover, You Should've Come Over ✨</p>
 
           <button style={styles.primaryBtn} onClick={() => setCurrentSlide(4)}>
             Continue to Main Mission ➔
@@ -111,14 +156,10 @@ export default function App() {
         </div>
       )}
 
-      {/* SLIDE 4: THE BIG QUESTION + DODGING NO BUTTON */}
+      {/* SLIDE 4: THE BIG QUESTION */}
       {currentSlide === 4 && (
         <div style={{ ...styles.card, position: 'relative', overflow: 'hidden', minHeight: '430px' }}>
-          <img
-            src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExOHp1a3B4bmd4bm95Mm1wZHlzN3dtcWsycGprNXBhdzcxaTRlY3Y4NSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/c6wvY5Q92I427j10eb/giphy.gif"
-            alt="Please Bear GIF"
-            style={{ width: '120px', borderRadius: '16px', marginBottom: '12px' }}
-          />
+          <div style={{ fontSize: '60px', marginBottom: '10px' }}>💖🕷️</div>
           <h1 style={styles.title}>For Rani ❤️</h1>
           <p style={styles.subtitle}>Will you make me the happiest person and be my Valentine?</p>
 
@@ -153,48 +194,53 @@ export default function App() {
         </div>
       )}
 
-      {/* SLIDE 5: UNO "LOVE YOU MORE" CARD & COUPON */}
+      {/* SLIDE 5: UNO REVERSE & COUPON DECK */}
       {currentSlide === 5 && (
         <div style={styles.card}>
           <div style={{ fontSize: '60px', animation: 'bounce 1s infinite' }}>🎉❤️</div>
-          <h1 style={{ ...styles.title, fontSize: '32px' }}>YAY! BEST DECISION EVER!</h1>
-          <p style={styles.subtitle}>You just made my entire year, Rani! ✨</p>
+          <h1 style={{ ...styles.title, fontSize: '28px' }}>YAY! BEST DECISION EVER!</h1>
 
           {/* UNO Reverse Card */}
           <div style={styles.unoCard}>
             <div style={styles.unoInner}>
-              <span style={{ fontSize: '28px', fontWeight: 900 }}>🔀</span>
-              <p style={{ margin: '6px 0 0 0', fontWeight: 900, fontSize: '15px' }}>UNO REVERSE</p>
-              <p style={{ margin: '2px 0 0 0', fontSize: '13px' }}>"I Love You More!"</p>
+              <span style={{ fontSize: '24px', fontWeight: 900 }}>🔀 UNO REVERSE</span>
+              <p style={{ margin: '4px 0 0 0', fontSize: '13px' }}>"YOU are now MY Valentine!"</p>
             </div>
           </div>
 
-          {/* Free Hugs & Kisses Coupon */}
-          <div style={styles.couponBox}>
-            <p style={{ margin: '0 0 6px 0', fontWeight: 'bold', color: '#be123c' }}>
-              🎟️ SPECIAL COUPON 🎟️
-            </p>
-            <p style={{ margin: '0 0 10px 0', fontSize: '14px', color: '#4b5563' }}>
-              Redeemable for Unlimited Hugs & Kisses!
-            </p>
-            <button
-              style={{
-                ...styles.primaryBtn,
-                padding: '10px 20px',
-                fontSize: '14px',
-                background: claimedCoupon ? '#10b981' : 'linear-gradient(135deg, #e11d48, #f43f5e)',
-              }}
-              onClick={() => setClaimedCoupon(true)}
-            >
-              {claimedCoupon ? '✅ CLAIMED FOREVER!' : 'Claim Coupon 🎁'}
-            </button>
+          <h3 style={{ color: '#be123c', margin: '15px 0 10px 0', fontSize: '16px' }}>
+            🎟️ CLAIM YOUR COUPONS:
+          </h3>
+
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', width: '100%' }}>
+            {[
+              { id: 1, title: '☕ Late Night Coffee / Boba Date' },
+              { id: 2, title: '🎬 Movie Night (You Control Remote)' },
+              { id: 3, title: '👑 Unlimited Free Hugs & Kisses' },
+            ].map((coupon) => (
+              <div
+                key={coupon.id}
+                onClick={() => toggleCoupon(coupon.id)}
+                style={{
+                  ...styles.couponCard,
+                  backgroundColor: claimedCoupons[coupon.id] ? '#d1fae5' : '#ffe4e6',
+                  borderColor: claimedCoupons[coupon.id] ? '#10b981' : '#f43f5e',
+                }}
+              >
+                <span>{coupon.title}</span>
+                <span style={{ fontWeight: 'bold', color: claimedCoupons[coupon.id] ? '#059669' : '#e11d48' }}>
+                  {claimedCoupons[coupon.id] ? 'CLAIMED ✅' : 'TAP TO CLAIM 🎁'}
+                </span>
+              </div>
+            ))}
           </div>
 
           <button
             style={styles.replayBtn}
             onClick={() => {
+              setWebsTapped(0);
               setNoCount(0);
-              setClaimedCoupon(false);
+              setClaimedCoupons({});
               setCurrentSlide(1);
             }}
           >
@@ -203,27 +249,16 @@ export default function App() {
         </div>
       )}
 
-      {/* CSS Animations */}
+      {/* Styling Keyframes */}
       <style>{`
-        @keyframes spin {
-          0% { transform: rotate(0deg); }
-          100% { transform: rotate(360deg); }
-        }
-        @keyframes spiralRotate {
-          0% { transform: rotate(0deg) scale(1); }
-          50% { transform: rotate(180deg) scale(1.1); }
-          100% { transform: rotate(360deg) scale(1); }
-        }
-        @keyframes bounce {
-          0%, 100% { transform: translateY(0); }
-          50% { transform: translateY(-10px); }
-        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        @keyframes spiralRotate { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
       `}</style>
     </div>
   );
 }
 
-// Inline Styles Object
 const styles: { [key: string]: React.CSSProperties } = {
   container: {
     minHeight: '100vh',
@@ -240,16 +275,16 @@ const styles: { [key: string]: React.CSSProperties } = {
   },
   spiralBg: {
     position: 'absolute',
-    width: '800px',
-    height: '800px',
+    width: '750px',
+    height: '750px',
     borderRadius: '50%',
-    background: 'radial-gradient(circle, rgba(244,63,94,0.25) 0%, rgba(225,29,72,0.05) 50%, transparent 70%)',
-    animation: 'spiralRotate 20s linear infinite',
+    background: 'radial-gradient(circle, rgba(244,63,94,0.2) 0%, transparent 70%)',
+    animation: 'spiralRotate 25s linear infinite',
     pointerEvents: 'none',
   },
   progressBar: {
     position: 'fixed',
-    top: '25px',
+    top: '20px',
     display: 'flex',
     gap: '8px',
     zIndex: 20,
@@ -257,7 +292,6 @@ const styles: { [key: string]: React.CSSProperties } = {
     backdropFilter: 'blur(10px)',
     padding: '8px 16px',
     borderRadius: '20px',
-    border: '1px solid rgba(255, 255, 255, 0.2)',
   },
   progressDot: {
     height: '8px',
@@ -265,15 +299,14 @@ const styles: { [key: string]: React.CSSProperties } = {
     transition: 'all 0.3s ease',
   },
   card: {
-    background: 'rgba(255, 255, 255, 0.92)',
+    background: 'rgba(255, 255, 255, 0.94)',
     backdropFilter: 'blur(20px)',
-    border: '2px solid rgba(255, 255, 255, 0.8)',
     borderRadius: '32px',
-    padding: '36px 28px',
+    padding: '35px 25px',
     maxWidth: '420px',
     width: '100%',
     textAlign: 'center',
-    boxShadow: '0 25px 50px rgba(0, 0, 0, 0.3), 0 0 40px rgba(225, 29, 72, 0.2)',
+    boxShadow: '0 25px 50px rgba(0,0,0,0.4)',
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
@@ -285,29 +318,48 @@ const styles: { [key: string]: React.CSSProperties } = {
     color: '#ffffff',
     fontSize: '11px',
     fontWeight: 900,
-    letterSpacing: '1.5px',
+    letterSpacing: '1px',
     padding: '6px 14px',
     borderRadius: '20px',
     marginBottom: '16px',
   },
-  gifImage: {
-    width: '140px',
-    height: '140px',
+  title: { fontSize: '28px', fontWeight: 900, color: '#be123c', margin: '0 0 8px 0' },
+  subtitle: { fontSize: '15px', color: '#4b5563', lineHeight: '1.5', marginBottom: '20px' },
+  webGrid: { display: 'flex', gap: '15px', margin: '20px 0' },
+  webBtn: {
+    fontSize: '36px',
+    background: '#ffe4e6',
+    border: '2px solid #f43f5e',
     borderRadius: '20px',
-    objectFit: 'cover',
-    marginBottom: '16px',
+    padding: '15px',
+    cursor: 'pointer',
+    transition: 'all 0.2s ease',
   },
-  title: {
-    fontSize: '30px',
-    fontWeight: 900,
+  vinylContainer: { margin: '15px 0' },
+  vinylRecord: {
+    width: '110px',
+    height: '110px',
+    borderRadius: '50%',
+    background: '#0f172a',
+    border: '3px solid #334155',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    boxShadow: '0 0 20px rgba(225, 29, 72, 0.3)',
+  },
+  vinylGroove: { position: 'absolute', inset: '8px', borderRadius: '50%', border: '1px dashed rgba(255,255,255,0.2)' },
+  vinylLabel: { width: '36px', height: '36px', borderRadius: '50%', background: '#e11d48', display: 'flex', alignItems: 'center', justifyContent: 'center' },
+  equalizer: { display: 'flex', gap: '4px', alignItems: 'flex-end', height: '36px', margin: '10px 0' },
+  eqBar: { width: '6px', background: '#e11d48', borderRadius: '4px', transition: 'height 0.2s ease' },
+  quoteText: { fontSize: '14px', fontStyle: 'italic', color: '#374151', margin: '5px 0 15px 0' },
+  musicToggleBtn: {
+    background: '#ffe4e6',
     color: '#be123c',
-    margin: '0 0 8px 0',
-  },
-  subtitle: {
-    fontSize: '15px',
-    color: '#4b5563',
-    lineHeight: '1.5',
-    margin: '0 0 24px 0',
+    border: '1px solid #f43f5e',
+    padding: '10px 20px',
+    borderRadius: '14px',
+    fontWeight: 'bold',
+    cursor: 'pointer',
   },
   primaryBtn: {
     background: 'linear-gradient(135deg, #e11d48 0%, #f43f5e 100%)',
@@ -318,119 +370,24 @@ const styles: { [key: string]: React.CSSProperties } = {
     borderRadius: '18px',
     fontSize: '16px',
     cursor: 'pointer',
-    boxShadow: '0 10px 20px rgba(225, 29, 72, 0.3)',
     width: '100%',
-    transition: 'all 0.2s ease',
   },
-  secondaryBtn: {
-    backgroundColor: '#e5e7eb',
-    color: '#374151',
-    fontWeight: 'bold',
-    border: 'none',
-    padding: '14px 22px',
-    borderRadius: '18px',
-    fontSize: '15px',
-    cursor: 'pointer',
-  },
-  polaroidFrame: {
-    background: '#ffffff',
-    padding: '12px 12px 20px 12px',
-    borderRadius: '8px',
-    boxShadow: '0 8px 20px rgba(0,0,0,0.15)',
-    transform: 'rotate(-2deg)',
-    marginBottom: '20px',
-    width: '80%',
-  },
-  polaroidImageArea: {
-    background: '#ffe4e6',
-    height: '140px',
-    borderRadius: '6px',
+  secondaryBtn: { backgroundColor: '#e5e7eb', color: '#374151', fontWeight: 'bold', border: 'none', padding: '14px 22px', borderRadius: '18px', fontSize: '15px' },
+  polaroidFrame: { background: '#ffffff', padding: '12px 12px 20px 12px', borderRadius: '8px', boxShadow: '0 8px 20px rgba(0,0,0,0.15)', transform: 'rotate(-2deg)', marginBottom: '20px', width: '80%' },
+  polaroidImageArea: { background: '#ffe4e6', height: '130px', borderRadius: '6px', display: 'flex', alignItems: 'center', justifyContent: 'center' },
+  polaroidCaption: { margin: '10px 0 0 0', fontSize: '13px', fontWeight: 'bold', color: '#be123c', fontStyle: 'italic' },
+  unoCard: { background: 'linear-gradient(135deg, #e11d48, #be123c)', color: '#ffffff', padding: '12px', borderRadius: '14px', width: '85%', transform: 'rotate(2deg)', marginBottom: '10px' },
+  unoInner: { border: '2px solid #ffffff', borderRadius: '10px', padding: '8px' },
+  couponCard: {
     display: 'flex',
+    justifyContent: 'space-between',
     alignItems: 'center',
-    justifyContent: 'center',
-  },
-  polaroidCaption: {
-    margin: '12px 0 0 0',
+    padding: '12px 16px',
+    borderRadius: '14px',
+    border: '1px dashed',
     fontSize: '13px',
     fontWeight: 'bold',
-    color: '#be123c',
-    fontStyle: 'italic',
-  },
-  vinylContainer: {
-    margin: '15px 0 20px 0',
-  },
-  vinylRecord: {
-    width: '120px',
-    height: '120px',
-    borderRadius: '50%',
-    background: '#0f172a',
-    border: '3px solid #334155',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    boxShadow: '0 0 25px rgba(225, 29, 72, 0.25)',
-    animation: 'spin 4s linear infinite',
-    position: 'relative',
-  },
-  vinylGroove: {
-    position: 'absolute',
-    inset: '8px',
-    borderRadius: '50%',
-    border: '1px dashed rgba(255,255,255,0.2)',
-  },
-  vinylLabel: {
-    width: '40px',
-    height: '40px',
-    borderRadius: '50%',
-    background: '#e11d48',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    zIndex: 2,
-  },
-  quoteText: {
-    fontSize: '14px',
-    fontStyle: 'italic',
-    color: '#374151',
-    margin: '0 0 6px 0',
-  },
-  songTitle: {
-    fontSize: '13px',
-    color: '#e11d48',
-    fontWeight: 'bold',
-    marginBottom: '24px',
-  },
-  unoCard: {
-    background: 'linear-gradient(135deg, #e11d48, #be123c)',
-    color: '#ffffff',
-    padding: '16px',
-    borderRadius: '16px',
-    boxShadow: '0 10px 20px rgba(225, 29, 72, 0.3)',
-    marginBottom: '16px',
-    width: '80%',
-    transform: 'rotate(2deg)',
-  },
-  unoInner: {
-    border: '2px solid #ffffff',
-    borderRadius: '12px',
-    padding: '10px',
-  },
-  couponBox: {
-    background: '#ffe4e6',
-    border: '2px dashed #f43f5e',
-    borderRadius: '18px',
-    padding: '14px',
-    width: '100%',
-    boxSizing: 'border-box',
-    marginBottom: '20px',
-  },
-  replayBtn: {
-    background: 'none',
-    border: 'none',
-    color: '#e11d48',
-    textDecoration: 'underline',
-    fontWeight: 'bold',
     cursor: 'pointer',
-    fontSize: '14px',
   },
+  replayBtn: { background: 'none', border: 'none', color: '#e11d48', textDecoration: 'underline', fontWeight: 'bold', cursor: 'pointer', fontSize: '14px', marginTop: '15px' },
 };
