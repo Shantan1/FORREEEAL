@@ -1,7 +1,4 @@
 import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import confetti from 'canvas-confetti';
-import { Heart, Sparkles, ArrowRight, Stars, Gift } from 'lucide-react';
 
 export default function App() {
   const [currentSlide, setCurrentSlide] = useState(1);
@@ -22,182 +19,183 @@ export default function App() {
 
   const handleYes = () => {
     setCurrentSlide(4);
-    confetti({
-      particleCount: 150,
-      spread: 80,
-      origin: { y: 0.6 },
-      colors: ['#ff4d6d', '#ff758f', '#ffb3c1', '#ffffff'],
-    });
   };
 
   const handleNo = () => {
     setNoCount((prev) => prev + 1);
   };
 
-  const yesButtonSize = noCount * 16 + 18;
+  const yesButtonSize = noCount * 14 + 18;
+
+  // Inline Styles for foolproof design & zero external library crashes
+  const containerStyle: React.CSSProperties = {
+    minHeight: '100vh',
+    width: '100vw',
+    background: 'linear-gradient(135deg, #ffe4e6 0%, #fecdd3 50%, #fda4af 100%)',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: '20px',
+    boxSizing: 'border-box',
+    fontFamily: 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+  };
+
+  const cardStyle: React.CSSProperties = {
+    backgroundColor: 'rgba(255, 255, 255, 0.9)',
+    backdropFilter: 'blur(16px)',
+    padding: '40px 30px',
+    borderRadius: '30px',
+    boxShadow: '0 25px 50px rgba(225, 29, 72, 0.2)',
+    border: '1px solid rgba(255, 255, 255, 1)',
+    maxWidth: '420px',
+    width: '100%',
+    textAlign: 'center',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    boxSizing: 'border-box',
+  };
+
+  const primaryBtnStyle: React.CSSProperties = {
+    background: 'linear-gradient(135deg, #e11d48 0%, #f43f5e 100%)',
+    color: '#ffffff',
+    fontWeight: 'bold',
+    border: 'none',
+    padding: '15px 30px',
+    borderRadius: '16px',
+    fontSize: '18px',
+    cursor: 'pointer',
+    boxShadow: '0 10px 20px rgba(225, 29, 72, 0.3)',
+    width: '100%',
+    transition: 'all 0.2s ease',
+  };
 
   return (
-    <div className="min-h-screen bg-rose-50 flex flex-col items-center justify-center p-4 text-center font-sans overflow-hidden">
-      {/* Slide Progress Indicator */}
-      <div className="fixed top-6 flex gap-2 z-10">
+    <div style={containerStyle}>
+      {/* Progress Dots */}
+      <div style={{ position: 'fixed', top: '30px', display: 'flex', gap: '8px', zIndex: 10 }}>
         {[1, 2, 3, 4].map((slideNum) => (
           <div
             key={slideNum}
-            className={`h-2 rounded-full transition-all duration-300 ${
-              currentSlide === slideNum
-                ? 'w-8 bg-rose-500'
-                : 'w-2 bg-rose-200'
-            }`}
+            style={{
+              height: '10px',
+              width: currentSlide === slideNum ? '30px' : '10px',
+              backgroundColor: currentSlide === slideNum ? '#e11d48' : 'rgba(225, 29, 72, 0.25)',
+              borderRadius: '10px',
+              transition: 'all 0.3s ease',
+            }}
           />
         ))}
       </div>
 
-      <AnimatePresence mode="wait">
-        {/* SLIDE 1: INTRO */}
-        {currentSlide === 1 && (
-          <motion.div
-            key="slide1"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            className="bg-white/80 backdrop-blur-md p-8 rounded-3xl shadow-xl border border-rose-100 max-w-md w-full flex flex-col items-center"
-          >
-            <motion.div
-              animate={{ rotate: [0, 10, -10, 0] }}
-              transition={{ repeat: Infinity, duration: 2 }}
-              className="mb-4 text-rose-500"
-            >
-              <Gift size={64} className="text-rose-500" />
-            </motion.div>
+      {/* SLIDE 1 */}
+      {currentSlide === 1 && (
+        <div style={cardStyle}>
+          <div style={{ fontSize: '60px', marginBottom: '15px' }}>🎁</div>
+          <h1 style={{ fontSize: '32px', color: '#be123c', margin: '0 0 10px 0', fontWeight: 900 }}>
+            Hey Rani! ✨
+          </h1>
+          <p style={{ fontSize: '16px', color: '#4b5563', lineHeight: '1.5', marginBottom: '30px' }}>
+            I crafted a special digital card just for you. Ready to open it?
+          </p>
+          <button onClick={() => setCurrentSlide(2)} style={primaryBtnStyle}>
+            Let's Open It ➔
+          </button>
+        </div>
+      )}
 
-            <h1 className="text-3xl font-extrabold text-rose-600 mb-3">
-              Hey Rani! ❤️
-            </h1>
-            <p className="text-gray-600 text-lg mb-8 leading-relaxed">
-              I built something small and special just for you. Ready to check it out?
-            </p>
+      {/* SLIDE 2 */}
+      {currentSlide === 2 && (
+        <div style={cardStyle}>
+          <div style={{ fontSize: '60px', marginBottom: '15px' }}>🌟</div>
+          <h2 style={{ fontSize: '26px', color: '#be123c', margin: '0 0 10px 0', fontWeight: 800 }}>
+            Just a gentle reminder...
+          </h2>
+          <p style={{ fontSize: '16px', color: '#4b5563', lineHeight: '1.5', marginBottom: '30px' }}>
+            Your smile literally lights up every space around you. Everything gets 100x brighter whenever you're around! 💖
+          </p>
+          <button onClick={() => setCurrentSlide(3)} style={primaryBtnStyle}>
+            Continue ➔
+          </button>
+        </div>
+      )}
 
+      {/* SLIDE 3 */}
+      {currentSlide === 3 && (
+        <div style={cardStyle}>
+          <div style={{ fontSize: '70px', marginBottom: '10px', animation: 'pulse 1.5s infinite' }}>
+            ❤️
+          </div>
+          <h1 style={{ fontSize: '32px', color: '#be123c', margin: '0 0 10px 0', fontWeight: 900 }}>
+            For Rani ❤️
+          </h1>
+          <p style={{ fontSize: '16px', color: '#4b5563', marginBottom: '30px' }}>
+            Will you make me the happiest person and be my Valentine?
+          </p>
+
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '12px', justifyContent: 'center', width: '100%', alignItems: 'center' }}>
             <button
-              onClick={() => setCurrentSlide(2)}
-              className="bg-rose-500 hover:bg-rose-600 text-white font-bold py-3 px-8 rounded-2xl shadow-lg hover:shadow-rose-300 transition-all duration-200 flex items-center gap-2"
-            >
-              Let's go <ArrowRight size={20} />
-            </button>
-          </motion.div>
-        )}
-
-        {/* SLIDE 2: REASONS / MEMORIES */}
-        {currentSlide === 2 && (
-          <motion.div
-            key="slide2"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            className="bg-white/80 backdrop-blur-md p-8 rounded-3xl shadow-xl border border-rose-100 max-w-md w-full flex flex-col items-center"
-          >
-            <motion.div
-              animate={{ scale: [1, 1.2, 1] }}
-              transition={{ repeat: Infinity, duration: 1.5 }}
-              className="mb-4 text-rose-500"
-            >
-              <Stars size={64} className="text-rose-500" />
-            </motion.div>
-
-            <h2 className="text-2xl font-bold text-rose-600 mb-3">
-              Just a Quick Reminder... ✨
-            </h2>
-            <p className="text-gray-600 text-base mb-6 leading-relaxed">
-              You bring so much light, smiles, and good vibes into everything around you. Life is simply better with you in it!
-            </p>
-
-            <button
-              onClick={() => setCurrentSlide(3)}
-              className="bg-rose-500 hover:bg-rose-600 text-white font-bold py-3 px-8 rounded-2xl shadow-lg hover:shadow-rose-300 transition-all duration-200 flex items-center gap-2"
-            >
-              Next <ArrowRight size={20} />
-            </button>
-          </motion.div>
-        )}
-
-        {/* SLIDE 3: THE QUESTION */}
-        {currentSlide === 3 && (
-          <motion.div
-            key="slide3"
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.9 }}
-            className="bg-white/80 backdrop-blur-md p-8 rounded-3xl shadow-xl border border-rose-100 max-w-md w-full flex flex-col items-center"
-          >
-            <motion.div
-              animate={{ scale: [1, 1.15, 1] }}
-              transition={{ repeat: Infinity, duration: 1.8 }}
-              className="mb-4 text-rose-500"
-            >
-              <Heart size={64} fill="#f43f5e" />
-            </motion.div>
-
-            <h1 className="text-3xl font-extrabold text-rose-600 mb-2">
-              For Rani ❤️
-            </h1>
-            <p className="text-gray-600 text-lg mb-8">
-              Will you make me the happiest person in the world and be my Valentine?
-            </p>
-
-            <div className="flex flex-wrap items-center justify-center gap-4 w-full">
-              <button
-                onClick={handleYes}
-                style={{ fontSize: `${yesButtonSize}px` }}
-                className="bg-rose-500 hover:bg-rose-600 text-white font-bold py-3 px-6 rounded-2xl shadow-lg hover:shadow-rose-300 transition-all duration-200 flex items-center justify-center gap-2"
-              >
-                <Sparkles size={20} /> Yes!
-              </button>
-
-              <button
-                onClick={handleNo}
-                className="bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold py-3 px-6 rounded-2xl transition-all duration-200"
-              >
-                {noPhrases[Math.min(noCount, noPhrases.length - 1)]}
-              </button>
-            </div>
-          </motion.div>
-        )}
-
-        {/* SLIDE 4: SUCCESS CELEBRATION */}
-        {currentSlide === 4 && (
-          <motion.div
-            key="slide4"
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="bg-white/90 backdrop-blur-md p-8 rounded-3xl shadow-2xl border border-rose-200 max-w-md w-full text-center flex flex-col items-center"
-          >
-            <div className="flex justify-center mb-4">
-              <motion.div
-                animate={{ rotate: [0, 10, -10, 0] }}
-                transition={{ repeat: Infinity, duration: 2 }}
-              >
-                <Heart size={80} fill="#f43f5e" className="text-rose-500" />
-              </motion.div>
-            </div>
-
-            <h2 className="text-3xl font-bold text-rose-600 mb-4">
-              Yay! Best decision ever! 🥰
-            </h2>
-            <p className="text-gray-700 text-lg leading-relaxed mb-6">
-              You just made my entire day, Rani. Can't wait to celebrate together! ❤️✨
-            </p>
-
-            <button
-              onClick={() => {
-                setNoCount(0);
-                setCurrentSlide(1);
+              onClick={handleYes}
+              style={{
+                ...primaryBtnStyle,
+                fontSize: `${yesButtonSize}px`,
+                padding: '14px 24px',
+                width: 'auto',
+                flex: 1,
               }}
-              className="text-sm text-rose-400 hover:text-rose-600 underline mt-2"
             >
-              Start over
+              ✨ Yes!
             </button>
-          </motion.div>
-        )}
-      </AnimatePresence>
+
+            <button
+              onClick={handleNo}
+              style={{
+                backgroundColor: '#e5e7eb',
+                color: '#374151',
+                fontWeight: 'bold',
+                border: 'none',
+                padding: '15px 20px',
+                borderRadius: '16px',
+                fontSize: '16px',
+                cursor: 'pointer',
+              }}
+            >
+              {noPhrases[Math.min(noCount, noPhrases.length - 1)]}
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* SLIDE 4 */}
+      {currentSlide === 4 && (
+        <div style={cardStyle}>
+          <div style={{ fontSize: '70px', marginBottom: '15px' }}>🎉</div>
+          <h2 style={{ fontSize: '28px', color: '#be123c', margin: '0 0 12px 0', fontWeight: 900 }}>
+            YAY! Best Decision Ever! 🥰
+          </h2>
+          <p style={{ fontSize: '16px', color: '#374151', lineHeight: '1.5', marginBottom: '25px' }}>
+            You just made my day, Rani! Can't wait to celebrate together! ❤️✨
+          </p>
+          <button
+            onClick={() => {
+              setNoCount(0);
+              setCurrentSlide(1);
+            }}
+            style={{
+              background: 'none',
+              border: 'none',
+              color: '#e11d48',
+              textDecoration: 'underline',
+              fontWeight: 'bold',
+              cursor: 'pointer',
+              fontSize: '14px',
+            }}
+          >
+            Replay memory
+          </button>
+        </div>
+      )}
     </div>
   );
 }
