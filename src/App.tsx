@@ -1,290 +1,435 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 
 export default function App() {
-  const [stage, setStage] = useState<'intro' | 'music' | 'question' | 'accepted'>('intro');
+  const [currentSlide, setCurrentSlide] = useState(1);
+  const [noCount, setNoCount] = useState(0);
   const [noPosition, setNoPosition] = useState({ top: '50%', left: '60%' });
-  const [isPlaying, setIsPlaying] = useState(true);
-  const [noAttempts, setNoAttempts] = useState(0);
+  const [claimedCoupon, setClaimedCoupon] = useState(false);
 
-  // Dodge function for the "No" button using Spider-Sense!
-  const dodgeNoButton = () => {
-    const randomTop = Math.floor(Math.random() * 70 + 15) + '%';
-    const randomLeft = Math.floor(Math.random() * 70 + 15) + '%';
+  const noPhrases = [
+    "No 🥺",
+    "Are you sure? 💔",
+    "Think again! 🐻",
+    "Last chance! 🕷️",
+    "Surely not? 🎸",
+    "Spidey-sense says reconsider! 🕸️",
+  ];
+
+  const handleNoDodge = () => {
+    const randomTop = Math.floor(Math.random() * 60 + 20) + '%';
+    const randomLeft = Math.floor(Math.random() * 60 + 20) + '%';
     setNoPosition({ top: randomTop, left: randomLeft });
-    setNoAttempts((prev) => prev + 1);
+    setNoCount((prev) => prev + 1);
   };
+
+  const yesButtonSize = noCount * 12 + 18;
 
   return (
     <div style={styles.container}>
-      {/* Background Animated Web Particles */}
-      <div style={styles.spiderBg}>
-        <div style={styles.webCornerTopLeft}>🕸️</div>
-        <div style={styles.webCornerTopRight}>🕸️</div>
+      {/* Background Animated Spiral Pattern */}
+      <div style={styles.spiralBg} />
+
+      {/* Slide Progress Bar */}
+      <div style={styles.progressBar}>
+        {[1, 2, 3, 4, 5].map((num) => (
+          <div
+            key={num}
+            style={{
+              ...styles.progressDot,
+              width: currentSlide === num ? '28px' : '10px',
+              backgroundColor: currentSlide === num ? '#e11d48' : 'rgba(225, 29, 72, 0.3)',
+            }}
+          />
+        ))}
       </div>
 
-      {/* STAGE 1: SPIDER-MAN ENTRANCE */}
-      {stage === 'intro' && (
+      {/* SLIDE 1: BEAR INTRO */}
+      {currentSlide === 1 && (
         <div style={styles.card}>
-          <div style={styles.spideyBadge}>CLASSIFIED S.H.I.E.L.D. FILE</div>
-          <div style={{ fontSize: '80px', margin: '15px 0' }}>🕷️</div>
-          <h1 style={styles.title}>Hey Rani!</h1>
+          <div style={styles.badge}>SPECIAL DELIVERY 📬</div>
+          <img
+            src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExcDdtZ2JiZDR0a3B3aTJtc3p3Y3dtY29reHJ6ZjZhNnR3OHR4a3R2byZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/Lp8alM9xBIBS/giphy.gif"
+            alt="Cute Bear GIF"
+            style={styles.gifImage}
+          />
+          <h1 style={styles.title}>Hey Rani! ✨</h1>
           <p style={styles.subtitle}>
-            Your friendly neighborhood Valentine message has arrived. Spider-Sense is tingling... 
+            I built a little interactive world just for you. Ready to explore? 🐻❤️
           </p>
-          <button style={styles.heroBtn} onClick={() => setStage('music')}>
-            THWIP! Enter The Vibe 🕸️
+          <button style={styles.primaryBtn} onClick={() => setCurrentSlide(2)}>
+            Unfold the Magic ➔
           </button>
         </div>
       )}
 
-      {/* STAGE 2: JEFF BUCKLEY VINYL PLAYER */}
-      {stage === 'music' && (
+      {/* SLIDE 2: POLAROID MEMORY CARD & SPIDER-MAN */}
+      {currentSlide === 2 && (
         <div style={styles.card}>
-          <div style={styles.musicTag}>NOW PLAYING: JEFF BUCKLEY</div>
+          <div style={styles.badge}>MEMORIES & SPIDEY VIBES 🕷️</div>
           
-          {/* Vinyl Record Animation */}
-          <div style={{ ...styles.vinyl, animation: isPlaying ? 'spin 4s linear infinite' : 'none' }}>
-            <div style={styles.vinylCenter}>🎸</div>
+          {/* Polaroid Frame */}
+          <div style={styles.polaroidFrame}>
+            <div style={styles.polaroidImageArea}>
+              <span style={{ fontSize: '48px' }}>🕷️❤️</span>
+            </div>
+            <p style={styles.polaroidCaption}>"My Favorite Person in Every Universe"</p>
           </div>
 
-          <p style={styles.quote}>
+          <p style={styles.subtitle}>
+            Even Spider-Man's web couldn't catch someone as special as you, Rani! 🕸️✨
+          </p>
+
+          <button style={styles.primaryBtn} onClick={() => setCurrentSlide(3)}>
+            Next Memory ➔
+          </button>
+        </div>
+      )}
+
+      {/* SLIDE 3: JEFF BUCKLEY VINYL RECORD */}
+      {currentSlide === 3 && (
+        <div style={styles.card}>
+          <div style={styles.badge}>NOW PLAYING 🎸</div>
+          
+          {/* Animated Vinyl Player */}
+          <div style={styles.vinylContainer}>
+            <div style={styles.vinylRecord}>
+              <div style={styles.vinylGroove} />
+              <div style={styles.vinylLabel}>
+                <span style={{ fontSize: '20px' }}>🎵</span>
+              </div>
+            </div>
+          </div>
+
+          <p style={styles.quoteText}>
             "Too young to hold on, and too old to just break free and run..."
           </p>
+          <p style={styles.songTitle}>Jeff Buckley — Lover, You Should've Come Over ✨</p>
 
-          <p style={{ ...styles.subtitle, color: '#f43f5e', fontWeight: 'bold' }}>
-            Lover, You Should've Come Over ✨
-          </p>
-
-          <button style={styles.heroBtn} onClick={() => setStage('question')}>
+          <button style={styles.primaryBtn} onClick={() => setCurrentSlide(4)}>
             Continue to Main Mission ➔
           </button>
         </div>
       )}
 
-      {/* STAGE 3: THE IMPOSSIBLE QUESTION (DODGING NO BUTTON) */}
-      {stage === 'question' && (
-        <div style={{ ...styles.card, position: 'relative', overflow: 'hidden', minHeight: '380px' }}>
-          <div style={{ fontSize: '60px' }}>❤️🕷️</div>
-          <h2 style={styles.title}>For Rani</h2>
-          <p style={styles.subtitle}>
-            Will you be my Valentine? (Spider-Sense active: "No" is practically unclickable!)
-          </p>
+      {/* SLIDE 4: THE BIG QUESTION + DODGING NO BUTTON */}
+      {currentSlide === 4 && (
+        <div style={{ ...styles.card, position: 'relative', overflow: 'hidden', minHeight: '430px' }}>
+          <img
+            src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExOHp1a3B4bmd4bm95Mm1wZHlzN3dtcWsycGprNXBhdzcxaTRlY3Y4NSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/c6wvY5Q92I427j10eb/giphy.gif"
+            alt="Please Bear GIF"
+            style={{ width: '120px', borderRadius: '16px', marginBottom: '12px' }}
+          />
+          <h1 style={styles.title}>For Rani ❤️</h1>
+          <p style={styles.subtitle}>Will you make me the happiest person and be my Valentine?</p>
 
-          <div style={{ marginTop: '30px', display: 'flex', justifyContent: 'center', gap: '20px' }}>
+          <div style={{ marginTop: '20px', display: 'flex', gap: '12px', justifyContent: 'center', width: '100%', alignItems: 'center' }}>
             <button
               style={{
-                ...styles.heroBtn,
+                ...styles.primaryBtn,
                 width: 'auto',
-                padding: `${14 + noAttempts * 4}px ${28 + noAttempts * 8}px`,
-                fontSize: `${18 + noAttempts * 2}px`,
+                fontSize: `${yesButtonSize}px`,
+                padding: '14px 28px',
                 zIndex: 10,
               }}
-              onClick={() => setStage('accepted')}
+              onClick={() => setCurrentSlide(5)}
             >
-              YES! 💖
+              YES! ✨
             </button>
 
-            {/* Dodging No Button */}
             <button
               style={{
-                ...styles.noBtn,
-                position: noAttempts > 0 ? 'absolute' : 'relative',
-                top: noAttempts > 0 ? noPosition.top : 'auto',
-                left: noAttempts > 0 ? noPosition.left : 'auto',
+                ...styles.secondaryBtn,
+                position: noCount > 0 ? 'absolute' : 'relative',
+                top: noCount > 0 ? noPosition.top : 'auto',
+                left: noCount > 0 ? noPosition.left : 'auto',
                 transition: 'all 0.15s ease-out',
               }}
-              onMouseEnter={dodgeNoButton}
-              onClick={dodgeNoButton}
+              onMouseEnter={handleNoDodge}
+              onClick={handleNoDodge}
             >
-              {noAttempts === 0 ? "No" : noAttempts < 5 ? "Missed! 🕸️" : "Nice try! 😂"}
+              {noPhrases[Math.min(noCount, noPhrases.length - 1)]}
             </button>
           </div>
         </div>
       )}
 
-      {/* STAGE 4: GRAND FINALE / VICTORY */}
-      {stage === 'accepted' && (
+      {/* SLIDE 5: UNO "LOVE YOU MORE" CARD & COUPON */}
+      {currentSlide === 5 && (
         <div style={styles.card}>
-          <div style={{ fontSize: '90px', animation: 'bounce 1s infinite' }}>🕷️🎉❤️</div>
-          <h1 style={{ ...styles.title, color: '#e11d48', fontSize: '36px' }}>
-            MISSION ACCOMPLISHED!
-          </h1>
-          <p style={styles.subtitle}>
-            You just made my entire year, Rani! Greatest decision in the Multiverse. 🌌
-          </p>
-          <div style={styles.quoteBox}>
-            "With great love comes great celebration." ❤️✨
+          <div style={{ fontSize: '60px', animation: 'bounce 1s infinite' }}>🎉❤️</div>
+          <h1 style={{ ...styles.title, fontSize: '32px' }}>YAY! BEST DECISION EVER!</h1>
+          <p style={styles.subtitle}>You just made my entire year, Rani! ✨</p>
+
+          {/* UNO Reverse Card */}
+          <div style={styles.unoCard}>
+            <div style={styles.unoInner}>
+              <span style={{ fontSize: '28px', fontWeight: 900 }}>🔀</span>
+              <p style={{ margin: '6px 0 0 0', fontWeight: 900, fontSize: '15px' }}>UNO REVERSE</p>
+              <p style={{ margin: '2px 0 0 0', fontSize: '13px' }}>"I Love You More!"</p>
+            </div>
           </div>
-          <button style={styles.resetBtn} onClick={() => { setNoAttempts(0); setStage('intro'); }}>
-            Replay Multiverse 🔄
+
+          {/* Free Hugs & Kisses Coupon */}
+          <div style={styles.couponBox}>
+            <p style={{ margin: '0 0 6px 0', fontWeight: 'bold', color: '#be123c' }}>
+              🎟️ SPECIAL COUPON 🎟️
+            </p>
+            <p style={{ margin: '0 0 10px 0', fontSize: '14px', color: '#4b5563' }}>
+              Redeemable for Unlimited Hugs & Kisses!
+            </p>
+            <button
+              style={{
+                ...styles.primaryBtn,
+                padding: '10px 20px',
+                fontSize: '14px',
+                background: claimedCoupon ? '#10b981' : 'linear-gradient(135deg, #e11d48, #f43f5e)',
+              }}
+              onClick={() => setClaimedCoupon(true)}
+            >
+              {claimedCoupon ? '✅ CLAIMED FOREVER!' : 'Claim Coupon 🎁'}
+            </button>
+          </div>
+
+          <button
+            style={styles.replayBtn}
+            onClick={() => {
+              setNoCount(0);
+              setClaimedCoupon(false);
+              setCurrentSlide(1);
+            }}
+          >
+            Replay Experience 🔄
           </button>
         </div>
       )}
 
-      {/* Inject Keyframe Animations */}
+      {/* CSS Animations */}
       <style>{`
         @keyframes spin {
           0% { transform: rotate(0deg); }
           100% { transform: rotate(360deg); }
         }
+        @keyframes spiralRotate {
+          0% { transform: rotate(0deg) scale(1); }
+          50% { transform: rotate(180deg) scale(1.1); }
+          100% { transform: rotate(360deg) scale(1); }
+        }
         @keyframes bounce {
           0%, 100% { transform: translateY(0); }
-          50% { transform: translateY(-15px); }
+          50% { transform: translateY(-10px); }
         }
       `}</style>
     </div>
   );
 }
 
-// Custom Retro-Futuristic Styling
+// Inline Styles Object
 const styles: { [key: string]: React.CSSProperties } = {
   container: {
     minHeight: '100vh',
     width: '100vw',
-    background: 'radial-gradient(circle at center, #1e1b4b 0%, #0f172a 100%)',
+    backgroundColor: '#0f172a',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
     padding: '20px',
     boxSizing: 'border-box',
-    fontFamily: '"Segoe UI", Roboto, -apple-system, sans-serif',
-    color: '#ffffff',
-    overflow: 'hidden',
+    fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
     position: 'relative',
+    overflow: 'hidden',
   },
-  spiderBg: {
+  spiralBg: {
     position: 'absolute',
-    inset: 0,
+    width: '800px',
+    height: '800px',
+    borderRadius: '50%',
+    background: 'radial-gradient(circle, rgba(244,63,94,0.25) 0%, rgba(225,29,72,0.05) 50%, transparent 70%)',
+    animation: 'spiralRotate 20s linear infinite',
     pointerEvents: 'none',
-    opacity: 0.15,
-    fontSize: '120px',
   },
-  webCornerTopLeft: {
-    position: 'absolute',
-    top: '-20px',
-    left: '-20px',
+  progressBar: {
+    position: 'fixed',
+    top: '25px',
+    display: 'flex',
+    gap: '8px',
+    zIndex: 20,
+    background: 'rgba(255, 255, 255, 0.1)',
+    backdropFilter: 'blur(10px)',
+    padding: '8px 16px',
+    borderRadius: '20px',
+    border: '1px solid rgba(255, 255, 255, 0.2)',
   },
-  webCornerTopRight: {
-    position: 'absolute',
-    top: '-20px',
-    right: '-20px',
+  progressDot: {
+    height: '8px',
+    borderRadius: '10px',
+    transition: 'all 0.3s ease',
   },
   card: {
-    background: 'rgba(30, 41, 59, 0.85)',
+    background: 'rgba(255, 255, 255, 0.92)',
     backdropFilter: 'blur(20px)',
-    border: '2px solid rgba(244, 63, 94, 0.4)',
+    border: '2px solid rgba(255, 255, 255, 0.8)',
     borderRadius: '32px',
-    padding: '40px 30px',
-    maxWidth: '440px',
+    padding: '36px 28px',
+    maxWidth: '420px',
     width: '100%',
     textAlign: 'center',
-    boxShadow: '0 0 50px rgba(225, 29, 72, 0.25)',
+    boxShadow: '0 25px 50px rgba(0, 0, 0, 0.3), 0 0 40px rgba(225, 29, 72, 0.2)',
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
     boxSizing: 'border-box',
     zIndex: 2,
   },
-  spideyBadge: {
-    background: '#e11d48',
-    color: '#fff',
+  badge: {
+    background: 'linear-gradient(135deg, #e11d48, #f43f5e)',
+    color: '#ffffff',
     fontSize: '11px',
     fontWeight: 900,
-    letterSpacing: '2px',
+    letterSpacing: '1.5px',
     padding: '6px 14px',
     borderRadius: '20px',
+    marginBottom: '16px',
   },
-  musicTag: {
-    background: 'rgba(244, 63, 94, 0.2)',
-    color: '#fb7185',
-    fontSize: '12px',
-    fontWeight: 'bold',
-    letterSpacing: '1px',
-    padding: '6px 14px',
+  gifImage: {
+    width: '140px',
+    height: '140px',
     borderRadius: '20px',
-    border: '1px solid rgba(244, 63, 94, 0.3)',
-    marginBottom: '20px',
+    objectFit: 'cover',
+    marginBottom: '16px',
   },
   title: {
-    fontSize: '32px',
+    fontSize: '30px',
     fontWeight: 900,
-    margin: '10px 0',
-    background: 'linear-gradient(to right, #fb7185, #e11d48)',
-    WebkitBackgroundClip: 'text',
-    WebkitTextFillColor: 'transparent',
+    color: '#be123c',
+    margin: '0 0 8px 0',
   },
   subtitle: {
     fontSize: '15px',
-    color: '#94a3b8',
-    lineHeight: '1.6',
-    margin: '0 0 25px 0',
+    color: '#4b5563',
+    lineHeight: '1.5',
+    margin: '0 0 24px 0',
   },
-  vinyl: {
-    width: '130px',
-    height: '130px',
-    borderRadius: '50%',
-    background: 'radial-gradient(circle, #334155 20%, #0f172a 21%, #0f172a 100%)',
-    border: '4px solid #475569',
+  primaryBtn: {
+    background: 'linear-gradient(135deg, #e11d48 0%, #f43f5e 100%)',
+    color: '#ffffff',
+    fontWeight: 'bold',
+    border: 'none',
+    padding: '14px 28px',
+    borderRadius: '18px',
+    fontSize: '16px',
+    cursor: 'pointer',
+    boxShadow: '0 10px 20px rgba(225, 29, 72, 0.3)',
+    width: '100%',
+    transition: 'all 0.2s ease',
+  },
+  secondaryBtn: {
+    backgroundColor: '#e5e7eb',
+    color: '#374151',
+    fontWeight: 'bold',
+    border: 'none',
+    padding: '14px 22px',
+    borderRadius: '18px',
+    fontSize: '15px',
+    cursor: 'pointer',
+  },
+  polaroidFrame: {
+    background: '#ffffff',
+    padding: '12px 12px 20px 12px',
+    borderRadius: '8px',
+    boxShadow: '0 8px 20px rgba(0,0,0,0.15)',
+    transform: 'rotate(-2deg)',
+    marginBottom: '20px',
+    width: '80%',
+  },
+  polaroidImageArea: {
+    background: '#ffe4e6',
+    height: '140px',
+    borderRadius: '6px',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    margin: '10px 0 25px 0',
-    boxShadow: '0 0 25px rgba(0,0,0,0.8)',
   },
-  vinylCenter: {
-    width: '45px',
-    height: '45px',
+  polaroidCaption: {
+    margin: '12px 0 0 0',
+    fontSize: '13px',
+    fontWeight: 'bold',
+    color: '#be123c',
+    fontStyle: 'italic',
+  },
+  vinylContainer: {
+    margin: '15px 0 20px 0',
+  },
+  vinylRecord: {
+    width: '120px',
+    height: '120px',
+    borderRadius: '50%',
+    background: '#0f172a',
+    border: '3px solid #334155',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    boxShadow: '0 0 25px rgba(225, 29, 72, 0.25)',
+    animation: 'spin 4s linear infinite',
+    position: 'relative',
+  },
+  vinylGroove: {
+    position: 'absolute',
+    inset: '8px',
+    borderRadius: '50%',
+    border: '1px dashed rgba(255,255,255,0.2)',
+  },
+  vinylLabel: {
+    width: '40px',
+    height: '40px',
     borderRadius: '50%',
     background: '#e11d48',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    fontSize: '20px',
+    zIndex: 2,
   },
-  quote: {
+  quoteText: {
     fontSize: '14px',
     fontStyle: 'italic',
-    color: '#cbd5e1',
-    lineHeight: '1.5',
-    margin: '0 0 10px 0',
+    color: '#374151',
+    margin: '0 0 6px 0',
   },
-  heroBtn: {
-    background: 'linear-gradient(135deg, #e11d48 0%, #be123c 100%)',
+  songTitle: {
+    fontSize: '13px',
+    color: '#e11d48',
+    fontWeight: 'bold',
+    marginBottom: '24px',
+  },
+  unoCard: {
+    background: 'linear-gradient(135deg, #e11d48, #be123c)',
     color: '#ffffff',
-    fontWeight: 'bold',
-    border: 'none',
-    padding: '16px 32px',
-    borderRadius: '20px',
-    fontSize: '16px',
-    cursor: 'pointer',
-    boxShadow: '0 10px 25px rgba(225, 29, 72, 0.4)',
+    padding: '16px',
+    borderRadius: '16px',
+    boxShadow: '0 10px 20px rgba(225, 29, 72, 0.3)',
+    marginBottom: '16px',
+    width: '80%',
+    transform: 'rotate(2deg)',
+  },
+  unoInner: {
+    border: '2px solid #ffffff',
+    borderRadius: '12px',
+    padding: '10px',
+  },
+  couponBox: {
+    background: '#ffe4e6',
+    border: '2px dashed #f43f5e',
+    borderRadius: '18px',
+    padding: '14px',
     width: '100%',
+    boxSizing: 'border-box',
+    marginBottom: '20px',
   },
-  noBtn: {
-    background: '#334155',
-    color: '#94a3b8',
-    fontWeight: 'bold',
-    border: 'none',
-    padding: '14px 24px',
-    borderRadius: '20px',
-    fontSize: '16px',
-    cursor: 'pointer',
-  },
-  quoteBox: {
-    background: 'rgba(225, 29, 72, 0.15)',
-    borderLeft: '4px solid #e11d48',
-    padding: '12px 16px',
-    borderRadius: '8px',
-    fontSize: '14px',
-    fontStyle: 'italic',
-    color: '#fecdd3',
-    margin: '15px 0 25px 0',
-  },
-  resetBtn: {
+  replayBtn: {
     background: 'none',
     border: 'none',
-    color: '#94a3b8',
+    color: '#e11d48',
     textDecoration: 'underline',
+    fontWeight: 'bold',
     cursor: 'pointer',
     fontSize: '14px',
   },
